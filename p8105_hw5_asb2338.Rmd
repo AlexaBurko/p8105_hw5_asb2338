@@ -4,7 +4,7 @@ author: "Alexa Burko"
 date: "2026-11-10"
 output: html_document
 ---
-
+# Setup and Libraries
 ```{r setup, include=FALSE}
 library(tidyverse)
 
@@ -25,3 +25,48 @@ scale_colour_discrete = scale_colour_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
 
 ```
+
+```{r}
+source("source/birthday_repeated.R")
+
+set.seed(1236)
+```
+
+
+## Problem 1
+
+Created function. It is in `source/birthday_repeated.R`
+
+Run this function 10000 times for each group size between 2 and 50.
+```{r}
+birthday_results_df =
+  expand_grid(
+    number_of_people = 2:50,
+    iter = 1:10000
+  ) |> 
+  mutate(
+    repeated = map_lgl(number_of_people, birthday_repeated)
+  )
+
+birthday_results_df
+
+```
+
+For each group size, compute the probability that at least two people in the group will share a birthday by averaging across the 10000 simulation runs
+```{r}
+birthday_results_df |> 
+  group_by(number_of_people) |> 
+  summarize(prob_of_repeat = mean(repeated)) 
+
+```
+
+Plot showing the probability as a function of group size
+```{r}
+birthday_results_df |> 
+  group_by(number_of_people) |> 
+  summarize(prob_of_repeat = mean(repeated)) |> 
+  ggplot(aes(x = number_of_people, y = prob_of_repeat)) +
+  geom_point() +
+  geom_line()
+```
+
