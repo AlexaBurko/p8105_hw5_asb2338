@@ -2,7 +2,7 @@
 title: "p8105_hw5"
 author: "Alexa Burko"
 date: "2026-11-10"
-output: html_document
+output: github_document
 ---
 # Setup and Libraries
 ```{r setup, include=FALSE}
@@ -76,7 +76,6 @@ This plot shows that the greater the group size, the higher the probability that
 
 ## Problem 2
 
-### Create a dataframe containing all file names
 ```{r}
 study_df = 
   tibble(
@@ -113,4 +112,5 @@ ggplot(aes(x = week, y = value, group = study_id, color = study_id)) +
   geom_point(alpha = 0.5) +
   facet_grid(~arm)
 ```
+
 Those in the control arm have lower values on average compared to those in the experimental arm. While the values of those in the experimental arm tend to increase as the weeks go on, the values of those in the control arm tend to stay the same or decrease. 
