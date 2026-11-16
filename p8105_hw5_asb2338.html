@@ -359,9 +359,7 @@ display: none;
 
 <div id="setup-and-libraries" class="section level1">
 <h1>Setup and Libraries</h1>
-<pre class="r"><code>source(&quot;source/birthday_repeated.R&quot;)
-
-set.seed(1236)</code></pre>
+<pre class="r"><code>set.seed(1236)</code></pre>
 <div id="problem-1" class="section level2">
 <h2>Problem 1</h2>
 <p>Created function. It is in
@@ -369,7 +367,9 @@ set.seed(1236)</code></pre>
 <div id="run-this-function-10000-times-for-each-group-size-between-2-and-50." class="section level3">
 <h3>Run this function 10000 times for each group size between 2 and
 50.</h3>
-<pre class="r"><code>birthday_results_df =
+<pre class="r"><code>source(&quot;source/birthday_repeated.R&quot;)
+
+birthday_results_df =
   expand_grid(
     number_of_people = 2:50,
     iter = 1:10000
@@ -429,6 +429,47 @@ simulation runs</h3>
 probability that two people in the group will share a birthday. There
 only needs to be about 23 people in the group for there to be a 50%
 chance that two people in the group will share a birthday.</p>
+</div>
+</div>
+<div id="problem-2" class="section level2">
+<h2>Problem 2</h2>
+<div id="create-a-dataframe-containing-all-file-names" class="section level3">
+<h3>Create a dataframe containing all file names</h3>
+<pre class="r"><code>study_df = 
+  tibble(
+files = list.files(&quot;data/data&quot;))</code></pre>
+<pre class="r"><code>source(&quot;source/file_import.R&quot;)
+
+study_df = study_df |&gt; 
+  mutate(
+    file_df = map(files, file_import)
+    ) |&gt; 
+  unnest(file_df) |&gt; 
+    separate(col = files, into = c(&quot;arm&quot;, &quot;study_id&quot;), sep = &quot;_&quot;) |&gt; 
+  mutate(
+    arm = case_match(
+      arm,
+      &quot;con&quot; ~ &quot;control&quot;,
+      &quot;exp&quot; ~ &quot;experimental&quot;
+    ),
+    study_id = str_remove(study_id, &quot;\\.csv&quot;)
+  )
+
+study_df</code></pre>
+<pre><code>## # A tibble: 160 × 4
+##    arm     study_id week  value
+##    &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt; &lt;dbl&gt;
+##  1 control 01       1      0.2 
+##  2 control 01       2     -1.31
+##  3 control 01       3      0.66
+##  4 control 01       4      1.96
+##  5 control 01       5      0.23
+##  6 control 01       6      1.09
+##  7 control 01       7      0.05
+##  8 control 01       8      1.94
+##  9 control 02       1      1.13
+## 10 control 02       2     -0.88
+## # ℹ 150 more rows</code></pre>
 </div>
 </div>
 </div>

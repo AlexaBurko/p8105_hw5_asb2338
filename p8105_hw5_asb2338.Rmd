@@ -27,8 +27,6 @@ scale_fill_discrete = scale_fill_viridis_d
 ```
 
 ```{r}
-source("source/birthday_repeated.R")
-
 set.seed(1236)
 ```
 
@@ -39,6 +37,9 @@ Created function. It is in `source/birthday_repeated.R`
 
 ### Run this function 10000 times for each group size between 2 and 50.
 ```{r}
+
+source("source/birthday_repeated.R")
+
 birthday_results_df =
   expand_grid(
     number_of_people = 2:50,
@@ -74,3 +75,42 @@ This plot shows that the greater the group size, the higher the probability that
 
 
 ## Problem 2
+
+### Create a dataframe containing all file names
+```{r}
+study_df = 
+  tibble(
+files = list.files("data/data"))
+```
+
+```{r message=FALSE, warning=FALSE}
+
+source("source/file_import.R")
+
+study_df = study_df |> 
+  mutate(
+    file_df = map(files, file_import)
+    ) |> 
+  unnest(file_df) |> 
+    separate(col = files, into = c("arm", "study_id"), sep = "_") |> 
+  mutate(
+    arm = case_match(
+      arm,
+      "con" ~ "control",
+      "exp" ~ "experimental"
+    ),
+    study_id = str_remove(study_id, "\\.csv")
+  )
+
+study_df
+
+```
+
+```{r}
+study_df |> 
+ggplot(aes(x = week, y = value, group = study_id, color = study_id)) +
+  geom_line(alpha = 0.5) +
+  geom_point(alpha = 0.5) +
+  facet_grid(~arm)
+```
+Those in the control arm have lower values on average compared to those in the experimental arm. While the values of those in the experimental arm tend to increase as the weeks go on, the values of those in the control arm tend to stay the same or decrease. 
